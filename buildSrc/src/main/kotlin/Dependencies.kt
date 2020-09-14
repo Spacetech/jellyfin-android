@@ -30,6 +30,9 @@ object Dependencies {
         const val composeRouter = "0.18.0"
         const val accompanistCoil = "0.2.1"
 
+        // Room
+        const val room = "2.2.5"
+
         // Network
         const val apiclient = "0.7.4"
         const val okHttp = "4.8.0"
@@ -98,6 +101,11 @@ object Dependencies {
         const val accompanistCoil = "dev.chrisbanes.accompanist:accompanist-coil:${Versions.accompanistCoil}"
     }
 
+    object Room {
+        val runtime = room("runtime")
+        val compiler = room("compiler")
+    }
+
     object Network {
         const val apiclient = "org.jellyfin.apiclient:android:${Versions.apiclient}"
         const val okHttp = "com.squareup.okhttp3:okhttp:${Versions.okHttp}"
@@ -134,5 +142,6 @@ object Dependencies {
     private fun kotlinx(module: String, version: String) = "org.jetbrains.kotlinx:kotlinx-$module:$version"
     private fun lifecycle(module: String) = "androidx.lifecycle:lifecycle-$module:${Versions.lifecycleExtensions}"
     private fun compose(module: String, variant: String? = null) = "androidx.compose.$module:$module${variant?.let { "-$it" } ?: ""}:${Versions.compose}"
+    private fun room(module: String) = "androidx.room:room-$module:${Versions.room}"
     private fun exoPlayer(module: String) = "com.google.android.exoplayer:exoplayer-$module:${Versions.exoPlayer}"
 }

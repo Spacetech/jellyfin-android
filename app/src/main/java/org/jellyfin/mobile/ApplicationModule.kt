@@ -12,14 +12,13 @@ import org.jellyfin.mobile.player.PlayerEvent
 import org.jellyfin.mobile.utils.Constants
 import org.jellyfin.mobile.utils.PermissionRequestHelper
 import org.koin.android.ext.koin.androidApplication
-import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 const val PLAYER_EVENT_CHANNEL = "PlayerEventChannel"
 const val WEBAPP_FUNCTION_CHANNEL = "WebAppFunctionChannel"
 
-val applicationModule: Module = module {
+val applicationModule = module {
     single { AppPreferences(androidApplication()) }
     single { OkHttpClient() }
     single { ImageLoader(androidApplication()) }
