@@ -13,6 +13,11 @@
 
     <style name="AppTheme" parent="AppTheme.V21" />
 
+    <!-- Splash Theme -->
+    <style name="AppTheme.Splash" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
     <!-- ExoPlayer theme -->
     <style name="AppTheme.Player.V21" parent="AppTheme.Base">
         <item name="android:windowBackground">@android:color/black</item>

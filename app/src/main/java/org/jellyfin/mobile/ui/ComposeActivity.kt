@@ -7,6 +7,7 @@ import androidx.compose.ui.platform.setContent
 import com.github.zsoltk.compose.backpress.AmbientBackPressHandler
 import com.github.zsoltk.compose.backpress.BackPressHandler
 import com.github.zsoltk.compose.savedinstancestate.BundleScope
+import org.jellyfin.mobile.R
 import org.jellyfin.mobile.ui.utils.ContextTheme
 
 class ComposeActivity : AppCompatActivity() {
@@ -14,6 +15,7 @@ class ComposeActivity : AppCompatActivity() {
     private val backPressHandler = BackPressHandler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContent {
             BundleScope(savedInstanceState) {
