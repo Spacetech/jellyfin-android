@@ -11,14 +11,17 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jellyfin.apiclient.Jellyfin
 import org.jellyfin.apiclient.interaction.ApiClient
+import org.jellyfin.apiclient.model.dto.UserDto
 import org.jellyfin.apiclient.model.system.PublicSystemInfo
 import org.jellyfin.mobile.R
+import org.jellyfin.mobile.model.dto.UserInfo
 import org.jellyfin.mobile.model.sql.dao.ServerDao
 import org.jellyfin.mobile.model.state.CheckUrlState
 import org.jellyfin.mobile.model.state.LoginState
 import org.jellyfin.mobile.utils.PRODUCT_NAME_SUPPORTED_SINCE
 import org.jellyfin.mobile.utils.authenticateUser
 import org.jellyfin.mobile.utils.getPublicSystemInfo
+import org.jellyfin.mobile.utils.getUserInfo
 
 class ServerController(
     private val jellyfin: Jellyfin,
@@ -28,6 +31,7 @@ class ServerController(
     private val scope = CoroutineScope(Dispatchers.Default)
 
     var loginState by mutableStateOf(LoginState.PENDING)
+    var userInfo by mutableStateOf<UserInfo?>(null)
 
     init {
         scope.launch {
@@ -37,6 +41,7 @@ class ServerController(
             loginState = if (serverInfo != null) {
                 apiClient.ChangeServerLocation(serverInfo.hostname)
                 apiClient.SetAuthenticationInfo(serverInfo.accessToken, serverInfo.userId)
+                userInfo = apiClient.getUserInfo(serverInfo.userId)?.toUserInfo()
                 LoginState.LOGGED_IN
             } else {
                 LoginState.NOT_LOGGED_IN
@@ -84,12 +89,29 @@ class ServerController(
         requireNotNull(apiClient.serverAddress) { "Server address not set" }
         val authResult = apiClient.authenticateUser(username, password)
         if (authResult != null) {
+            val user = authResult.user
             withContext(Dispatchers.IO) {
-                serverDao.insert(apiClient.serverAddress, authResult.user.id, authResult.accessToken)
+                serverDao.insert(apiClient.serverAddress, user.id, authResult.accessToken)
             }
+            userInfo = user?.toUserInfo()
             loginState = LoginState.LOGGED_IN
             return true
         }
         return false
     }
+
+    fun tryLogout() {
+        scope.launch { logout() }
+    }
+
+    suspend fun logout() {
+        withContext(Dispatchers.IO) {
+            serverDao.logout(apiClient.serverAddress)
+        }
+        apiClient.ChangeServerLocation(null)
+        loginState = LoginState.NOT_LOGGED_IN
+        userInfo = null
+    }
 }
+
+private fun UserDto.toUserInfo() = UserInfo(id, name, primaryImageTag)
