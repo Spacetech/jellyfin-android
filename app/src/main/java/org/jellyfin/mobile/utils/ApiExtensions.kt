@@ -6,6 +6,8 @@ import org.jellyfin.apiclient.interaction.Response
 import org.jellyfin.apiclient.model.configuration.ServerConfiguration
 import org.jellyfin.apiclient.model.dto.UserDto
 import org.jellyfin.apiclient.model.dto.UserItemDataDto
+import org.jellyfin.apiclient.model.querying.ArtistsQuery
+import org.jellyfin.apiclient.model.querying.ItemQuery
 import org.jellyfin.apiclient.model.querying.ItemsResult
 import org.jellyfin.apiclient.model.session.PlaybackProgressInfo
 import org.jellyfin.apiclient.model.session.PlaybackStopInfo
@@ -51,6 +53,14 @@ suspend fun ApiClient.markPlayed(itemId: String, userId: String): UserItemDataDt
 
 suspend fun ApiClient.getUserViews(): ItemsResult? = suspendCoroutine { continuation ->
     GetUserViews(currentUserId, ContinuationResponse(continuation))
+}
+
+suspend fun ApiClient.getItems(query: ItemQuery): ItemsResult? = suspendCoroutine { continuation ->
+    GetItemsAsync(query.apply { userId = currentUserId }, ContinuationResponse(continuation))
+}
+
+suspend fun ApiClient.getAlbumArtists(query: ArtistsQuery): ItemsResult? = suspendCoroutine { continuation ->
+    GetAlbumArtistsAsync(query.apply { userId = currentUserId }, ContinuationResponse(continuation))
 }
 
 class ContinuationResponse<T>(private val continuation: Continuation<T?>) : Response<T>() {
