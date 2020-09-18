@@ -50,7 +50,7 @@ class ExternalPlayer(private val activity: MainActivity) : KoinComponent {
     private fun notifyEvent(event: String, parameters: String = "") {
         if (event in arrayOf(Constants.EVENT_CANCELED, Constants.EVENT_ENDED, Constants.EVENT_TIME_UPDATE) && parameters == parameters.filter { it.isDigit() }) {
             activity.runOnUiThread {
-                activity.loadUrl("javascript:window.ExtPlayer.notify$event($parameters)")
+//                activity.loadUrl("javascript:window.ExtPlayer.notify$event($parameters)")
             }
         }
     }

@@ -157,7 +157,7 @@ class NativeInterface(private val activity: MainActivity) {
         activity.chromecast.execute(action, JSONArray(args), object : JavascriptCallback() {
             override fun callback(keep: Boolean, err: String?, result: String?) {
                 activity.runOnUiThread {
-                    activity.loadUrl("""javascript:window.NativeShell.castCallback("$action", $keep, $err, $result);""")
+//                    activity.loadUrl("""javascript:window.NativeShell.castCallback("$action", $keep, $err, $result);""")
                 }
             }
         })
