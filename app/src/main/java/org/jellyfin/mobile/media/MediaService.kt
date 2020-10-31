@@ -130,6 +130,8 @@ class MediaService : MediaBrowserServiceCompat() {
         }
 
         // ensure the api client is up to date
+        // TODO: load from DB
+
         apiClient.ChangeServerLocation(appPreferences.instanceUrl)
         apiClient.SetAuthenticationInfo(
             appPreferences.instanceAccessToken,
@@ -262,7 +264,7 @@ class MediaService : MediaBrowserServiceCompat() {
                     MediaItemType.Album.toString() -> {
                         val query = ItemQuery()
                         query.parentId = primaryItemId
-                        query.userId = appPreferences.instanceUserId
+                        query.userId = apiClient.currentUserId
                         query.sortBy = arrayOf(ItemSortBy.SortName)
 
                         processItemsResponse(apiClient.getItems(query))
@@ -274,7 +276,7 @@ class MediaService : MediaBrowserServiceCompat() {
                     MediaItemType.Artist.toString() -> {
                         val query = ItemQuery()
                         query.artistIds = arrayOf(primaryItemId)
-                        query.userId = appPreferences.instanceUserId
+                        query.userId = apiClient.currentUserId
                         query.sortBy = arrayOf(ItemSortBy.SortName)
                         query.sortOrder = SortOrder.Ascending
                         query.recursive = true
@@ -292,7 +294,7 @@ class MediaService : MediaBrowserServiceCompat() {
                     MediaItemType.Playlist.toString() -> {
                         val query = PlaylistItemQuery()
                         query.id = primaryItemId
-                        query.userId = appPreferences.instanceUserId
+                        query.userId = apiClient.currentUserId
 
                         processItemsResponse(apiClient.getPlaylistItems(query))
                     }
@@ -305,7 +307,7 @@ class MediaService : MediaBrowserServiceCompat() {
                     MediaItemType.LibraryPlaylists.toString() -> {
                         val query = ItemQuery()
                         query.parentId = primaryItemId
-                        query.userId = appPreferences.instanceUserId
+                        query.userId = apiClient.currentUserId
                         query.sortBy = arrayOf(ItemSortBy.SortName)
                         query.sortOrder = SortOrder.Ascending
                         query.recursive = true
@@ -339,7 +341,7 @@ class MediaService : MediaBrowserServiceCompat() {
                     MediaItemType.LibraryLatest.toString() -> {
                         val query = LatestItemsQuery()
                         query.parentId = primaryItemId
-                        query.userId = appPreferences.instanceUserId
+                        query.userId = apiClient.currentUserId
                         query.includeItemTypes = arrayOf(BaseItemType.Audio.name)
                         query.limit = 100
 
@@ -357,7 +359,7 @@ class MediaService : MediaBrowserServiceCompat() {
                     MediaItemType.LibraryArtists.toString() -> {
                         val query = ArtistsQuery()
                         query.parentId = primaryItemId
-                        query.userId = appPreferences.instanceUserId
+                        query.userId = apiClient.currentUserId
                         query.sortBy = arrayOf(ItemSortBy.SortName)
                         query.sortOrder = SortOrder.Ascending
                         query.recursive = true
@@ -377,7 +379,7 @@ class MediaService : MediaBrowserServiceCompat() {
                              */
                             val query = ItemQuery()
                             query.parentId = primaryItemId
-                            query.userId = appPreferences.instanceUserId
+                            query.userId = apiClient.currentUserId
                             query.sortBy = arrayOf(ItemSortBy.IsFolder, ItemSortBy.SortName)
                             query.sortOrder = SortOrder.Ascending
                             query.recursive = true
@@ -394,7 +396,7 @@ class MediaService : MediaBrowserServiceCompat() {
                              */
                             val query = ItemsByNameQuery()
                             query.parentId = primaryItemId
-                            query.userId = appPreferences.instanceUserId
+                            query.userId = apiClient.currentUserId
                             query.sortBy = arrayOf(ItemSortBy.SortName)
                             query.sortOrder = SortOrder.Ascending
                             query.recursive = true
@@ -546,7 +548,7 @@ class MediaService : MediaBrowserServiceCompat() {
 
         fun createMediaItem(mediaId: String): ExoPlayerMediaItem {
             val url = "${appPreferences.instanceUrl}/Audio/${mediaId}/universal?" +
-                "UserId=${appPreferences.instanceUserId}&" +
+                "UserId=${apiClient.currentUserId}&" +
                 "DeviceId=${URLEncoder.encode(device.deviceId, Charsets.UTF_8.name())}&" +
                 "MaxStreamingBitrate=140000000&" +
                 "Container=opus,mp3|mp3,aac,m4a,m4b|aac,flac,webma,webm,wav,ogg&" +
